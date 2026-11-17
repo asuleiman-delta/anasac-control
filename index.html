@@ -3,12 +3,822 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Anasac Control · Home</title>
-<meta http-equiv="refresh" content="0; url=Home%20Control.dc.html">
-<script>location.replace('Home%20Control.dc.html' + location.hash);</script>
-<style>html,body{margin:0;height:100%;background:#F5F7FA;font-family:'Schibsted Grotesk',system-ui,sans-serif;color:#08142A}body{display:grid;place-items:center}a{color:#193D7B}a:hover{color:#132E5D}</style>
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1f3a5f"/><text x="50" y="62" font-family="sans-serif" font-size="30" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
 </head>
 <body>
-<a href="Home%20Control.dc.html">Abrir Home Anasac Control</a>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Schibsted+Grotesk:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="tokens.css">
+<script src="./image-slot.js"></script>
+<style>
+:root{--font-ui:'Schibsted Grotesk',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace}
+[data-brand="control"]{--text-primary:var(--blue-950);--text-secondary:#566070;--text-muted:#6B7482;--surface-base:#F5F7FA;--surface-warm:#EBEFF4;--surface-sand:#DFE5EC;--surface-card:#fff;--border-subtle:#DFE5EC;--border-default:#C9D1DB}
+html,body{margin:0;background:#F5F7FA;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+a{color:var(--blue-700);text-decoration:none}
+a:hover{color:var(--blue-800)}
+::selection{background:var(--blue-200)}
+:focus-visible{outline:2px solid var(--blue-600);outline-offset:3px}
+input::placeholder{color:#6B7482}
+[data-pin]:hover,[data-pin]:focus-visible{z-index:5!important}
+[data-pin]:hover [data-pin-card],[data-pin]:focus-visible [data-pin-card]{opacity:1!important;transform:none!important}
+@keyframes ctrlFade{from{opacity:0}to{opacity:1}}
+@keyframes ctrlDrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes ctrlSlide{from{transform:translateX(100%)}to{transform:none}}
+@keyframes ctrlSlideL{from{transform:translateX(-100%)}to{transform:none}}
+a[data-env]:hover img,a[data-env]:focus-visible img{transform:scale(1.06)}
+@keyframes ctrlWipe{0%{left:100%;opacity:1}85%{opacity:1}100%{left:0;opacity:0}}
+@keyframes ctrlBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ctrlLbl{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes ldbar{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-brand="control" style="font-family:var(--font-ui);color:var(--text-primary);background:var(--surface-base);position:relative;overflow-x:clip;min-height:100vh">
+<sc-if value="{{ loaderOn }}" hint-placeholder-val="{{ true }}"><div aria-hidden="true" style="position:fixed;inset:0;z-index:200;background:#F5F7FA;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .6s ease,visibility .6s;opacity:{{ loaderOpacity }}">
+  <div style="display:flex;align-items:center;gap:14px">
+    <img src="assets/logo-anasac.png" alt="" style="height:40px;width:auto;display:block">
+    <span style="width:1px;height:30px;background:var(--border-default)"></span>
+    <span style="font-size:28px;font-weight:500;letter-spacing:-.02em;color:var(--blue-800);line-height:1">Control</span>
+  </div>
+  <div style="width:140px;height:3px;border-radius:999px;background:var(--blue-50);overflow:hidden">{{ loaderBar }}</div>
+</div></sc-if>
+
+<!-- 00 Header -->
+<header data-screen-label="00 Header" onMouseLeave="{{ closeMega }}" style="position:sticky;top:0;z-index:40;background:rgba(245,247,250,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-subtle)">
+  <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:0 clamp(20px,4vw,40px);height:72px;display:flex;align-items:center;gap:clamp(12px,2vw,28px)">
+      <a href="#" aria-label="Anasac Control, inicio" style="display:flex;align-items:center;gap:14px;flex:none">
+        <img src="assets/logo-anasac.png" alt="Anasac" style="height:28px;width:auto;display:block">
+        <span style="width:1px;height:22px;background:var(--border-default)"></span>
+        <span style="font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--blue-800);line-height:1">Control</span>
+      </a>
+      <div style="position:relative;flex:none" onMouseEnter="{{ closeMegaOnly }}">
+        <button type="button" aria-expanded="{{ marcas }}" onClick="{{ toggleMarcas }}" style="height:38px;padding:0 12px;border-radius:999px;border:0;background:{{ marcasBg }};font:inherit;font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;cursor:pointer" style-hover="background:var(--surface-warm);color:var(--text-primary)">Marcas Anasac <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <sc-if value="{{ marcas }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 10px);left:0;width:260px;padding:8px;border-radius:20px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 24px 60px -20px rgba(8,20,42,.3);display:flex;flex-direction:column;animation:ctrlDrop .18s ease-out">
+            <div style="min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:12px;background:var(--blue-50);color:var(--blue-800);font-size:15px">Anasac Control <span style="font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--blue-700);color:#fff">Estás aquí</span></div>
+            <a href="https://asuleiman-delta.github.io/anasac-jardin/" target="_blank" rel="noopener" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:12px;color:var(--text-primary);font-size:15px" style-hover="background:var(--surface-warm);color:var(--text-primary)">Anasac Jardín <span style="color:var(--text-muted)">↗</span></a>
+            <a href="#" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:12px;color:var(--text-primary);font-size:15px" style-hover="background:var(--surface-warm);color:var(--text-primary)">Anasac Hogar <span style="color:var(--text-muted)">↗</span></a>
+            <a href="#" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:12px;color:var(--text-primary);font-size:15px" style-hover="background:var(--surface-warm);color:var(--text-primary)">Anasac Pet <span style="color:var(--text-muted)">↗</span></a>
+          </div>
+        </sc-if>
+      </div>
+      <form onSubmit="{{ submitSearch }}" onMouseEnter="{{ closeMegaOnly }}" style="position:relative;flex:1;min-width:0;max-width:520px;margin:0 calc(8px - clamp(12px,2vw,28px)) 0 auto;height:40px;display:flex;align-items:center;gap:8px;padding:0 4px 0 14px;border-radius:999px;background:#fff;box-shadow:0 0 0 1.5px {{ searchRing }};transition:box-shadow .15s">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-700)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 11a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M20 20l-4-4"></path></svg>
+        <input type="search" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ onSF }}" onBlur="{{ onSB }}" placeholder="Busca por producto, plaga o principio activo" aria-label="Buscar en Anasac Control" style="flex:1;min-width:0;height:100%;border:0;outline:none;background:transparent;font:inherit;font-size:15px;letter-spacing:-.01em;color:var(--text-primary)">
+        <button type="submit" aria-label="Buscar" style="width:32px;height:32px;flex:none;border-radius:50%;border:0;background:var(--blue-700);color:#fff;display:grid;place-items:center;cursor:pointer" style-hover="background:var(--blue-800)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+        <sc-if value="{{ sf }}" hint-placeholder-val="{{ false }}">
+          <div onMouseDown="{{ keep }}" style="position:absolute;top:calc(100% + 10px);left:0;right:0;z-index:5;padding:20px;border-radius:20px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 24px 60px -20px rgba(8,20,42,.3);display:flex;flex-direction:column;gap:12px;animation:ctrlDrop .18s ease-out">
+            <sc-if value="{{ qEmpty }}" hint-placeholder-val="{{ true }}">
+              <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Búsquedas frecuentes</span>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ frequent }}" as="f" hint-placeholder-count="6"><button type="button" data-q="{{ f }}" onClick="{{ pickQ }}" style="padding:8px 14px;border-radius:999px;border:1px solid var(--border-default);background:transparent;font:inherit;font-size:14px;color:var(--text-primary);cursor:pointer" style-hover="background:var(--blue-50);border-color:var(--blue-400);color:var(--blue-800)">{{ f }}</button></sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ qHas }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ results }}" as="r" hint-placeholder-count="4"><button type="button" data-q="{{ r.label }}" onClick="{{ pickQ }}" style="min-height:48px;display:flex;align-items:center;gap:14px;padding:0 10px;margin:0 -10px;border:0;border-radius:12px;background:transparent;font:inherit;font-size:15px;color:var(--text-primary);text-align:left;cursor:pointer" style-hover="background:var(--surface-base)"><span style="width:118px;flex:none;font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">{{ r.type }}</span><span style="flex:1">{{ r.label }}</span><span style="color:var(--blue-700)">→</span></button></sc-for>
+                <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><span style="padding:8px 0;font-size:14px;color:var(--text-secondary)">Sin coincidencias. Prueba con el nombre de la plaga o del principio activo, o consulta al chat técnico.</span></sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </form>
+      <button type="button" onClick="{{ openContact }}" onMouseEnter="{{ closeMegaOnly }}" style="flex:none;height:40px;padding:0 18px;border-radius:999px;border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);font:inherit;font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s" style-hover="background:var(--text-primary);color:#fff">Contacto</button>
+    </div>
+    <nav aria-label="Principal" style="padding:0 clamp(20px,4vw,40px);height:48px;display:flex;align-items:center;gap:2px;font-size:14px;border-top:1px solid var(--border-subtle)">
+      <a href="#" onMouseEnter="{{ closeMegaOnly }}" aria-current="page" style="padding:7px 12px;border-radius:999px;background:var(--surface-warm);color:var(--text-primary)">Inicio</a>
+      <button type="button" aria-expanded="{{ megaSol }}" onMouseEnter="{{ openSol }}" onClick="{{ toggleSol }}" style="padding:7px 12px;border-radius:999px;border:0;background:{{ solBg }};font:inherit;color:var(--text-secondary);display:flex;align-items:center;gap:5px;cursor:pointer" style-hover="background:var(--surface-warm);color:var(--text-primary)">Soluciones <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s;transform:{{ solRot }}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <button type="button" aria-expanded="{{ megaProd }}" onMouseEnter="{{ openProd }}" onClick="{{ toggleProd }}" style="padding:7px 12px;border-radius:999px;border:0;background:{{ prodBg }};font:inherit;color:var(--text-secondary);display:flex;align-items:center;gap:5px;cursor:pointer" style-hover="background:var(--surface-warm);color:var(--text-primary)">Productos <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s;transform:{{ prodRot }}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <a href="#biblioteca" onMouseEnter="{{ closeMegaOnly }}" style="padding:7px 12px;border-radius:999px;color:var(--text-secondary)" style-hover="background:var(--surface-warm);color:var(--text-primary)">Biblioteca técnica</a>
+      <a href="#academia" onMouseEnter="{{ closeMegaOnly }}" style="padding:7px 12px;border-radius:999px;color:var(--text-secondary)" style-hover="background:var(--surface-warm);color:var(--text-primary)">Academia</a>
+      <a href="#donde-comprar" onMouseEnter="{{ closeMegaOnly }}" style="padding:7px 12px;border-radius:999px;color:var(--text-secondary)" style-hover="background:var(--surface-warm);color:var(--text-primary)">Dónde comprar</a>
+    </nav>
+    <sc-if value="{{ megaSol }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;top:100%;padding:8px clamp(20px,4vw,40px) 0">
+        <div style="max-width:1280px;margin:0 auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 24px 60px -20px rgba(8,20,42,.3);display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:40px;animation:ctrlDrop .18s ease-out">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Por plaga</span>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 24px">
+              <sc-for list="{{ allPests }}" as="p" hint-placeholder-count="12"><a href="#" style="min-height:44px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border-subtle);font-size:15px;color:var(--text-primary)" style-hover="color:var(--blue-700)"><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">{{ p.id }}</span>{{ p.n }}</a></sc-for>
+            </div>
+            <span style="font-size:13px;color:var(--text-muted)">Orden por peso en el portafolio · validado técnicamente por Anasac</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;padding-left:32px;border-left:1px solid var(--border-subtle)">
+            <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Por entorno de aplicación</span>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ envs }}" as="e" hint-placeholder-count="7"><a href="#" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);font-size:15px;color:var(--text-primary)" style-hover="color:var(--blue-700)">{{ e.n }}<span style="color:var(--text-muted)">→</span></a></sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ megaProd }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;top:100%;padding:8px clamp(20px,4vw,40px) 0">
+        <div style="max-width:1280px;margin:0 auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 24px 60px -20px rgba(8,20,42,.3);display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:40px;animation:ctrlDrop .18s ease-out">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Familias de catálogo</span>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+              <sc-for list="{{ families }}" as="f" hint-placeholder-count="7"><a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-radius:14px;background:var(--surface-base);font-size:16px;color:var(--text-primary)" style-hover="background:var(--surface-warm);color:var(--text-primary)">{{ f.n }}<span style="color:var(--blue-700)">→</span></a></sc-for>
+            </div>
+            <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700);margin-top:10px">Higiene y desinfección</span>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+              <sc-for list="{{ hygiene }}" as="f" hint-placeholder-count="2"><a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-radius:14px;background:var(--surface-base);font-size:16px;color:var(--text-primary)" style-hover="background:var(--surface-warm);color:var(--text-primary)">{{ f.n }}<span style="color:var(--blue-700)">→</span></a></sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;padding:24px;border-radius:18px;background:var(--blue-950);color:#fff">
+            <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-300)">Catálogo con filtros</span>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ filters }}" as="f" hint-placeholder-count="6"><div style="min-height:38px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px;color:rgba(255,255,255,.85)">{{ f }}<span style="font-family:var(--font-mono);font-size:12px;color:var(--blue-300)">+</span></div></sc-for>
+            </div>
+            <a href="#" style="align-self:flex-start;margin-top:auto;height:44px;padding:0 22px;border-radius:999px;background:#fff;color:var(--blue-950);display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase" style-hover="background:var(--blue-100);color:var(--blue-950)">Ir al catálogo con filtros →</a>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+    <div style="height:56px;padding:0 16px;display:flex;align-items:center;gap:6px">
+      <button type="button" aria-label="Abrir menú" onClick="{{ openMenu }}" style="width:44px;height:44px;margin-left:-10px;border:0;border-radius:50%;background:transparent;color:var(--text-primary);display:grid;place-items:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      <a href="#" aria-label="Anasac Control, inicio" style="display:flex;align-items:center;gap:9px;margin-right:auto">
+        <img src="assets/logo-anasac.png" alt="Anasac" style="height:21px;width:auto;display:block">
+        <span style="width:1px;height:16px;background:var(--border-default)"></span>
+        <span style="font-size:17px;font-weight:500;letter-spacing:-.02em;color:var(--blue-800);line-height:1">Control</span>
+      </a>
+      <button type="button" onClick="{{ openContact }}" style="height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);font:inherit;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">Contacto</button>
+    </div>
+    <div style="padding:0 16px 12px">
+      <form onSubmit="{{ submitSearch }}" style="position:relative;height:48px;display:flex;align-items:center;gap:8px;padding:0 4px 0 14px;border-radius:999px;background:#fff;box-shadow:0 0 0 1.5px {{ searchRing }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue-700)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 11a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M20 20l-4-4"></path></svg>
+        <input type="search" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ onSF }}" onBlur="{{ onSB }}" placeholder="Producto, plaga o principio activo" aria-label="Buscar en Anasac Control" style="flex:1;min-width:0;height:100%;border:0;outline:none;background:transparent;font:inherit;font-size:16px;color:var(--text-primary)">
+        <button type="submit" aria-label="Buscar" style="width:40px;height:40px;flex:none;border-radius:50%;border:0;background:var(--blue-700);color:#fff;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+        <sc-if value="{{ sf }}" hint-placeholder-val="{{ false }}">
+          <div onMouseDown="{{ keep }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:5;padding:16px;border-radius:20px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 24px 60px -20px rgba(8,20,42,.3);display:flex;flex-direction:column;gap:12px">
+            <sc-if value="{{ qEmpty }}" hint-placeholder-val="{{ true }}">
+              <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Búsquedas frecuentes</span>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ frequent }}" as="f" hint-placeholder-count="6"><button type="button" data-q="{{ f }}" onClick="{{ pickQ }}" style="min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--border-default);background:transparent;font:inherit;font-size:14px;color:var(--text-primary)">{{ f }}</button></sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ qHas }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ results }}" as="r" hint-placeholder-count="4"><button type="button" data-q="{{ r.label }}" onClick="{{ pickQ }}" style="min-height:52px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:0;border:0;border-bottom:1px solid var(--border-subtle);background:transparent;font:inherit;font-size:15px;color:var(--text-primary);text-align:left"><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">{{ r.type }}</span>{{ r.label }}</button></sc-for>
+                <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:var(--text-secondary)">Sin coincidencias. Prueba con la plaga o el principio activo.</span></sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </form>
+    </div>
+  </sc-if>
+</header>
+<sc-if value="{{ megaAny }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeMega }}" style="position:fixed;inset:0;z-index:30;background:rgba(8,20,42,.28);animation:ctrlFade .2s"></div></sc-if>
+
+<!-- 01 Hero -->
+<section data-screen-label="01 Hero" style="background:var(--surface-warm);height:{{ heroSecH }};min-height:{{ heroSecMin }};box-sizing:border-box">
+  <div style="height:100%;padding:clamp(24px,3vw,40px) clamp(16px,4vw,40px) clamp(32px,4vw,48px);box-sizing:border-box;display:grid;grid-template-columns:{{ heroCols }};grid-template-rows:{{ heroRows }};gap:clamp(32px,4vw,56px);align-items:center">
+    <div style="display:flex;flex-direction:column;gap:28px;padding-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px;line-height:16px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg><span>Línea profesional · Uso exclusivo PCO</span></div>
+      <h1 style="margin:0;font-weight:400;font-size:clamp(36px,4vw,58px);line-height:1.02;letter-spacing:-.06em;color:var(--text-primary);text-wrap:balance">Identifica la plaga, encuentra la solución, <span style="color:var(--blue-700)">aplica con respaldo</span></h1>
+      <p style="margin:0;font-size:clamp(18px,1.7vw,24px);line-height:1.42;letter-spacing:-.03em;max-width:30em;text-wrap:pretty;color:var(--text-secondary)">Portafolio profesional de control de plagas para aplicadores certificados.</p>
+      <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-top:4px">
+        <a href="#plagas" style="display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 22px;border-radius:999px;background:var(--blue-700);color:#fff;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,transform .15s" style-hover="background:var(--blue-800);color:#fff" style-active="background:var(--blue-900);transform:scale(.98)">Encontrar una solución <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a href="#portafolio" style="font-size:16px;line-height:24px;letter-spacing:-.01em;color:var(--text-primary);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:6px;text-decoration-color:var(--blue-400)" style-hover="color:var(--blue-800);text-decoration-color:var(--blue-800)">Ver portafolio →</a>
+      </div>
+    </div>
+    <div role="region" aria-roledescription="carrusel" aria-label="Destacados de Anasac Control" onMouseEnter="{{ heroHoverOn }}" onMouseLeave="{{ heroHoverOff }}" onMouseMove="{{ heroMove }}" onPointerDown="{{ heroDown }}" onPointerUp="{{ heroUp }}" onPointerCancel="{{ heroCancel }}" onDragStart="{{ heroNoDrag }}" onClickCapture="{{ heroClickGuard }}" style="touch-action:pan-y;cursor:grab;user-select:none;position:relative;height:{{ heroH }}">
+      <div style="position:absolute;inset:0;border-radius:{{ heroRadius }};overflow:hidden;container-type:inline-size;background:#F2F2F2;box-shadow:0 0 0 1px var(--border-subtle)">
+        <div aria-hidden="true" style="position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;box-shadow:inset 0 0 0 1px var(--blue-100),inset 0 0 60px 6px color-mix(in oklch,var(--blue-300) 55%,transparent)"></div>
+        <div ref="{{ heroTrackRef }}" style="position:absolute;inset:-24px;z-index:2;pointer-events:none;transition:transform .9s cubic-bezier(.2,.7,.2,1);will-change:transform">
+          <sc-for list="{{ heroPhotos }}" as="p" hint-placeholder-count="3"><div style="position:absolute;inset:0;overflow:hidden;background:#0E1A2E;z-index:{{ p.z }};clip-path:{{ p.clip }};transition:clip-path {{ p.cDur }} cubic-bezier(.7,0,.2,1) {{ p.cDel }}"><img src="{{ p.src }}" alt="{{ p.alt }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ p.pos }};display:block;transform-origin:{{ p.orig }};transform:{{ p.kb }};filter:{{ p.fx }};transition:transform {{ p.kbDur }} cubic-bezier(.2,.6,.3,1) {{ p.kbDel }},filter 1.1s ease {{ p.kbDel }}"></img></div></sc-for>
+          {{ heroEdge }}
+        </div>
+        <span aria-hidden="true" style="position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(to bottom,rgba(8,20,42,.42),transparent 26%,transparent 70%,rgba(8,20,42,.38))"></span>
+        <div aria-hidden="true" style="position:absolute;right:clamp(20px,3vw,36px);top:clamp(20px,3vw,36px);z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:10px;color:#fff;pointer-events:none">
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;opacity:.85">{{ heroPos }}</span>{{ heroLabel }}</div>
+          <div style="display:flex;gap:4px"><sc-for list="{{ heroBars }}" as="r" hint-placeholder-count="3"><span style="position:relative;width:32px;height:2px;overflow:hidden;background:rgba(255,255,255,.35)">{{ r.fill }}</span></sc-for></div>
+        </div>
+        <div style="position:absolute;left:50%;top:clamp(20px,2.4vw,32px);transform:translateX(-50%);z-index:4;display:none;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-sm);font-size:13px;color:var(--text-primary);pointer-events:none"><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">{{ heroPos }}</span>{{ heroPest }}</div>
+        <div style="position:absolute;left:0;right:0;bottom:clamp(20px,2.4vw,32px);display:flex;justify-content:center;gap:8px;z-index:4"><button type="button" aria-label="Anterior" onClick="{{ heroPrev }}" style="width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.96);color:var(--text-primary);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:#fff" style-active="transform:scale(.95)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><button type="button" aria-label="{{ heroPlayLabel }}" onClick="{{ heroTogglePlay }}" style="width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.96);color:var(--text-primary);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:#fff" style-active="transform:scale(.95)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{ heroPlayIcon }}"></path></svg></button><button type="button" aria-label="Siguiente" onClick="{{ heroNext }}" style="width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.96);color:var(--text-primary);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:#fff" style-active="transform:scale(.95)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Plagas -->
+<section id="plagas" data-screen-label="02 Plagas" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px 40px;margin-bottom:clamp(24px,3.4vw,40px)">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:640px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m8 2 1.88 1.88"></path><path d="M14.12 3.88 16 2"></path><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"></path><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"></path><path d="M12 20v-9"></path><path d="M6.53 9C4.6 8.8 3 7.1 3 5"></path><path d="M6 13H2"></path><path d="M3 21c0-2.1 1.7-3.9 3.8-4"></path><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"></path><path d="M22 13h-4"></path><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"></path></svg><span>Soluciones por plaga</span></div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(32px,3.1vw,44px);line-height:1.09;letter-spacing:-.05em;text-wrap:balance">¿Qué plaga estás controlando?</h2>
+        <p style="margin:0;font-size:clamp(17px,1.4vw,20px);line-height:1.4;letter-spacing:-.02em;color:var(--text-secondary)">Entra por la plaga y llega al producto registrado para ella.</p>
+      </div>
+      <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><a href="#" style="height:44px;padding:0 24px;border-radius:999px;border:1.5px solid var(--text-primary);color:var(--text-primary);display:inline-flex;align-items:center;gap:10px;font-size:16px;letter-spacing:-.01em;transition:background .15s" style-hover="background:var(--text-primary);color:#fff">Ver todas las plagas <span style="font-family:var(--font-mono);font-size:13px">(12)</span> →</a></sc-if>
+    </div>
+    <div style="display:grid;grid-template-columns:{{ pestCols }};gap:clamp(10px,1.4vw,16px)">
+      <sc-for list="{{ pests }}" as="p" hint-placeholder-count="6">
+        <a href="#" style="display:flex;flex-direction:column;gap:12px;padding:8px 8px 14px;border-radius:18px;background:#fff;border:1px solid var(--border-subtle);color:var(--text-primary);transition:border-color .15s,transform .24s var(--ease-out)" style-hover="border-color:var(--blue-400);transform:translateY(-2px);color:var(--text-primary)">
+          <sc-if value="{{ showPestImg }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ p.icon }}" hint-placeholder-val="{{ false }}"><div style="position:relative;aspect-ratio:4/3;display:grid;place-items:center"><div role="img" aria-label="{{ p.n }}" style="width:82%;height:82%;background:{{ p.iconBg }};mix-blend-mode:multiply;transform:{{ p.iconT }}"></div></div></sc-if><sc-if value="{{ p.noIcon }}" hint-placeholder-val="{{ false }}"><div style="position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--surface-warm);filter:grayscale(1) contrast(1.05)"><image-slot id="{{ p.slot }}" shape="rect" placeholder="{{ p.ph }}" style="position:absolute;inset:0"></image-slot></div></sc-if></sc-if>
+          <div style="display:flex;flex-direction:column;gap:4px;padding:0 6px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:clamp(17px,1.4vw,19px);letter-spacing:-.02em">{{ p.n }}</span></div>
+            <sc-if value="{{ showSci }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;line-height:1.35;font-style:italic;color:var(--text-secondary)">{{ p.s }}</span></sc-if>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+    <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><a href="#" style="margin-top:16px;height:48px;border-radius:999px;border:1.5px solid var(--text-primary);color:var(--text-primary);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px">Ver todas las plagas <span style="font-family:var(--font-mono);font-size:13px">(12)</span> →</a></sc-if>
+  </div>
+</section>
+
+<!-- 03 Entornos -->
+<section data-screen-label="03 Entornos" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px 40px;margin-bottom:clamp(24px,3.4vw,40px)">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:640px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M17 18h1"></path><path d="M12 18h1"></path><path d="M7 18h1"></path></svg><span>Soluciones por entorno</span></div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(32px,3.1vw,44px);line-height:1.09;letter-spacing:-.05em">¿Dónde aplicas?</h2>
+        <p style="margin:0;font-size:clamp(17px,1.4vw,20px);line-height:1.4;letter-spacing:-.02em;color:var(--text-secondary)">Soluciones por entorno de aplicación y su normativa.</p>
+      </div>
+      <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:12px">
+        <button type="button" aria-label="Anterior" onClick="{{ envPrev }}" style="width:52px;height:52px;border-radius:50%;border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--text-primary);color:#fff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></button>
+        <button type="button" aria-label="Siguiente" onClick="{{ envNext }}" style="width:52px;height:52px;border-radius:50%;border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--text-primary);color:#fff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+      </div></sc-if>
+    </div>
+    <div ref="{{ envRef }}" style="display:flex;gap:clamp(12px,1.6vw,20px);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;margin:0 calc(-1 * clamp(16px,4vw,40px));padding:0 clamp(16px,4vw,40px) 4px;scroll-padding:0 clamp(16px,4vw,40px)">
+      <sc-for list="{{ envs }}" as="e" hint-placeholder-count="7">
+        <a href="#" data-env="" style="flex:0 0 {{ envW }};scroll-snap-align:start;position:relative;aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--blue-900);color:#fff" style-hover="color:#fff">
+          <img loading="lazy" src="{{ e.img }}" alt="{{ e.ph }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.2,.7,.2,1)"></img>
+          <div style="position:absolute;inset:auto 0 0 0;height:60%;background:linear-gradient(to top,rgba(8,20,42,.9),rgba(8,20,42,0));pointer-events:none"></div>
+          <div style="position:absolute;left:18px;right:18px;bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;pointer-events:none">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:var(--font-mono);font-size:11px;color:var(--blue-200)">{{ e.id }}</span><span style="font-size:clamp(19px,1.6vw,22px);line-height:1.15;letter-spacing:-.02em;text-wrap:balance">{{ e.n }}</span></div>
+            <span style="width:40px;height:40px;flex:none;border-radius:50%;background:#fff;color:var(--blue-950);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"></path></svg></span>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Portafolio -->
+<section id="portafolio" data-screen-label="04 Portafolio" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <div style="padding:{{ portPad }};border-radius:{{ portRadius }};background:#fff;border:1px solid var(--border-subtle);display:grid;grid-template-columns:{{ portCols }};gap:clamp(28px,5vw,72px)">
+      <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"></path><path d="M12 22V12"></path><path d="m3.3 7 7.7 5 7.7-5"></path></svg><span>Acceso rápido</span></div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(32px,3.1vw,44px);line-height:1.09;letter-spacing:-.05em">Portafolio por categoría</h2>
+        <p style="margin:0;font-size:clamp(17px,1.4vw,20px);line-height:1.4;letter-spacing:-.02em;color:var(--text-secondary)">Si ya sabes el tipo de producto, entra directo.</p>
+        <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><a href="#" style="margin-top:14px;height:48px;padding:0 24px;border-radius:999px;background:var(--blue-700);color:#fff;display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:background .15s" style-hover="background:var(--blue-800);color:#fff">Ir al catálogo con filtros →</a></sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:clamp(24px,3vw,36px)">
+        <div style="display:grid;grid-template-columns:{{ famCols }};column-gap:32px">
+          <sc-for list="{{ families }}" as="f" hint-placeholder-count="7">
+            <a href="#" style="min-height:64px;display:flex;align-items:center;gap:16px;border-top:1px solid var(--border-subtle);color:var(--text-primary)" style-hover="color:var(--blue-700)">
+              <span style="width:28px;font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">{{ f.id }}</span>
+              <span style="flex:1;font-size:clamp(18px,1.5vw,21px);letter-spacing:-.02em">{{ f.n }}</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:var(--blue-700)"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </a>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--text-muted)">Higiene y desinfección</span>
+          <div style="display:grid;grid-template-columns:{{ famCols }};column-gap:32px">
+            <sc-for list="{{ hygiene }}" as="f" hint-placeholder-count="2">
+              <a href="#" style="min-height:64px;display:flex;align-items:center;gap:16px;border-top:1px solid var(--border-subtle);color:var(--text-primary)" style-hover="color:var(--blue-700)">
+                <span style="width:28px;font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">{{ f.id }}</span>
+                <span style="flex:1;font-size:clamp(18px,1.5vw,21px);letter-spacing:-.02em">{{ f.n }}</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:var(--blue-700)"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><a href="#" style="height:52px;border-radius:999px;background:var(--blue-700);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Ir al catálogo con filtros →</a></sc-if>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Academia -->
+<section id="academia" data-screen-label="05 Academia" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <div data-dark="" style="padding:{{ acaPad }};border-radius:{{ portRadius }};background:var(--blue-950);color:#fff;display:grid;grid-template-columns:{{ acaCols }};gap:clamp(28px,5vw,64px);align-items:center">
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-300)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M21.42 10.92a1 1 0 0 0-.02-1.84L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.83l8.57 3.91a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg><span>Academia Anasac</span></div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(36px,3.8vw,56px);line-height:1.04;letter-spacing:-.05em;text-wrap:balance">Capacitación para aplicadores</h2>
+        <p style="margin:0;font-size:clamp(17px,1.4vw,20px);line-height:1.4;letter-spacing:-.02em;color:rgba(255,255,255,.72);max-width:26em">Cursos técnicos con certificación, dictados por especialistas.</p>
+        <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><a href="#" style="margin-top:12px;height:48px;padding:0 24px;border-radius:999px;background:#fff;color:var(--blue-950);display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase" style-hover="background:var(--blue-100);color:var(--blue-950)">Ir a Academia Anasac ↗</a></sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ courseCols }};gap:clamp(12px,1.6vw,20px)">
+        <sc-for list="{{ courses }}" as="c" hint-placeholder-count="2">
+          <a href="#" data-env="" style="display:flex;flex-direction:column;gap:14px;padding:8px 8px 18px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;transition:background .15s" style-hover="background:rgba(255,255,255,.1);color:#fff">
+            <div style="position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--blue-900)"><img loading="lazy" src="{{ c.img }}" alt="{{ c.ph }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.2,.7,.2,1)"></img></div>
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 8px"><span style="font-size:clamp(18px,1.5vw,21px);line-height:1.2;letter-spacing:-.02em;text-wrap:balance">{{ c.t }}</span><span style="color:var(--blue-300)">↗</span></div>
+          </a>
+        </sc-for>
+      </div>
+      <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><a href="#" style="height:52px;border-radius:999px;background:#fff;color:var(--blue-950);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Ir a Academia Anasac ↗</a></sc-if>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Biblioteca -->
+<section id="biblioteca" data-screen-label="06 Biblioteca técnica" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px 40px;margin-bottom:24px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg><span>Por tema, no por fecha</span></div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(32px,3.1vw,44px);line-height:1.09;letter-spacing:-.05em">Biblioteca técnica</h2>
+      </div>
+      <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><a href="#" style="display:inline-flex;align-items:center;gap:8px;font-size:16px;letter-spacing:-.01em;color:var(--blue-700);padding:10px 0">Ver toda la biblioteca técnica →</a></sc-if>
+    </div>
+    <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * clamp(16px,4vw,40px)) clamp(20px,2.6vw,32px);padding:0 clamp(16px,4vw,40px)">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6"><button type="button" data-c="{{ c.n }}" onClick="{{ pickCat }}" aria-pressed="{{ c.on }}" style="flex:none;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:inherit;font-size:14px;cursor:pointer;transition:background .15s" style-hover="border-color:var(--blue-500)">{{ c.n }}</button></sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:{{ artCols }};gap:clamp(12px,1.6vw,20px)">
+      <sc-for list="{{ articles }}" as="a" hint-placeholder-count="3">
+        <a href="#" style="min-height:{{ artH }};display:flex;flex-direction:column;justify-content:space-between;gap:28px;padding:clamp(20px,2.2vw,28px);border-radius:20px;background:#fff;border:1px solid var(--border-subtle);color:var(--text-primary);transition:border-color .15s,transform .24s var(--ease-out)" style-hover="border-color:var(--blue-400);transform:translateY(-2px);color:var(--text-primary)">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <span style="align-self:flex-start;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--blue-50);color:var(--blue-800)">{{ a.cat }}</span>
+            <span style="font-size:clamp(19px,1.6vw,23px);line-height:1.2;letter-spacing:-.025em;text-wrap:pretty">{{ a.t }}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border-subtle)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">{{ a.m }}</span><span style="color:var(--blue-700)">→</span></div>
+        </a>
+      </sc-for>
+      <sc-if value="{{ noArticles }}" hint-placeholder-val="{{ false }}"><div style="padding:28px;border-radius:20px;border:1px dashed var(--border-default);font-size:15px;color:var(--text-secondary)">Aún no hay artículos destacados en este tema. Revisa la biblioteca completa.</div></sc-if>
+    </div>
+    <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><a href="#" style="margin-top:12px;min-height:44px;display:flex;align-items:center;font-size:16px;color:var(--blue-700)">Ver toda la biblioteca técnica →</a></sc-if>
+  </div>
+</section>
+
+<!-- 07 Respaldo -->
+<section data-screen-label="07 Respaldo" style="padding:{{ secPad }} 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+    <p style="margin:0 0 clamp(32px,4vw,56px);max-width:24em;font-size:clamp(26px,3vw,42px);line-height:1.14;letter-spacing:-.045em;text-wrap:pretty">Anasac Control es la línea profesional de Anasac: <span style="color:var(--text-secondary)">productos registrados, asesoría en terreno y soporte técnico a lo largo de todo Chile.</span></p>
+    <div style="display:grid;grid-template-columns:{{ statCols }};gap:0 clamp(16px,3vw,40px)">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-top:1.5px solid var(--text-primary)">
+          <span style="font-size:clamp(24px,2.4vw,32px);line-height:1.1;letter-spacing:-.04em">{{ s.v }}</span>
+          <span style="font-size:15px;line-height:1.4;color:var(--text-secondary)">{{ s.l }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- 08 Cierre doble -->
+<section id="donde-comprar" data-screen-label="08 Cierre doble" style="padding:{{ secPad }} 0 {{ secPad }}">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(16px,4vw,40px);display:grid;grid-template-columns:{{ closeCols }};gap:clamp(12px,1.6vw,20px)">
+    <div style-hover="transform:translateY(-2px);box-shadow:0 0 0 1px var(--blue-400)" style="box-shadow:0 0 0 1px transparent;transition:transform .24s var(--ease-out),box-shadow .15s;min-height:{{ closeH }};padding:clamp(24px,3vw,40px);border-radius:{{ portRadius }};background:var(--surface-warm);display:grid;grid-template-columns:{{ closeInner }};gap:clamp(20px,2.4vw,32px);align-items:stretch;overflow:hidden">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;gap:28px;height:100%">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="width:52px;height:52px;border-radius:16px;background:#fff;display:grid;place-items:center;margin-bottom:6px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue-700)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path><path d="M9.5 9.5a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0"></path></svg></span>
+          <h2 style="margin:0;font-weight:400;font-size:clamp(28px,2.6vw,38px);line-height:1.1;letter-spacing:-.05em">¿Dónde comprar?</h2>
+          <p style="margin:0;font-size:17px;line-height:1.45;color:var(--text-secondary)">Distribuidores autorizados por región.</p>
+        </div>
+        <a href="#" style="align-self:flex-start;height:48px;padding:0 24px;border-radius:999px;border:1.5px solid var(--text-primary);color:var(--text-primary);display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:background .15s" style-hover="background:var(--text-primary);color:#fff">Ver distribuidores →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;min-height:{{ closeVisH }}">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--text-muted)">Región
+            <select value="{{ dReg }}" onChange="{{ pickReg }}" style="height:44px;padding:0 12px;border-radius:12px;border:0;box-shadow:0 0 0 1px var(--border-subtle);background:#fff;font:inherit;font-size:14px;text-transform:none;letter-spacing:0;color:var(--text-primary);cursor:pointer"><sc-for list="{{ dRegs }}" as="o" hint-placeholder-count="1"><option value="{{ o.n }}">{{ o.n }}</option></sc-for></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--text-muted)">Comuna
+            <select value="{{ dCom }}" onChange="{{ pickCom }}" style="height:44px;padding:0 12px;border-radius:12px;border:0;box-shadow:0 0 0 1px var(--border-subtle);background:#fff;font:inherit;font-size:14px;text-transform:none;letter-spacing:0;color:var(--text-primary);cursor:pointer"><sc-for list="{{ dComs }}" as="o" hint-placeholder-count="1"><option value="{{ o.n }}">{{ o.n }}</option></sc-for></select>
+          </label>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ dTipos }}" as="t" hint-placeholder-count="3"><button type="button" data-t="{{ t.n }}" onClick="{{ pickTipo }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font:inherit;font-size:13px;cursor:pointer">{{ t.n }}</button></sc-for>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;border-radius:18px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle);overflow:hidden">
+          <sc-for list="{{ dRes }}" as="r" hint-placeholder-count="3"><div style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:3px">
+            <span style="align-self:flex-start;font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:{{ r.tagBg }};color:{{ r.tagFg }}">{{ r.t }}</span>
+            <span style="font-size:14px;line-height:18px;color:var(--text-primary)">{{ r.n }}</span>
+            <span style="font-size:12px;line-height:16px;color:var(--text-secondary)">{{ r.a }}</span>
+          </div></sc-for>
+          <sc-if value="{{ dNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 14px;font-size:14px;color:var(--text-secondary)">Sin puntos de venta para este filtro.</div></sc-if>
+        </div>
+      </div>
+    </div>
+    <div onMouseEnter="{{ chatPrevOn }}" onMouseLeave="{{ chatPrevOff }}" style-hover="transform:translateY(-2px);box-shadow:0 0 0 1px var(--blue-300)" style="box-shadow:0 0 0 1px transparent;transition:transform .24s var(--ease-out),box-shadow .15s;min-height:{{ closeH }};padding:clamp(24px,3vw,40px);border-radius:{{ portRadius }};background:var(--blue-700);color:#fff;display:grid;grid-template-columns:{{ closeInner }};gap:clamp(20px,2.4vw,32px);align-items:stretch;overflow:hidden">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;gap:28px;height:100%">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;margin-bottom:6px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18.5V7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8.5z"></path><path d="M8.5 9.5h7M8.5 12.5h4"></path></svg></span>
+          <h2 style="margin:0;font-weight:400;font-size:clamp(28px,2.6vw,38px);line-height:1.1;letter-spacing:-.05em">¿Necesitas asesoría técnica?</h2>
+          <p style="margin:0;font-size:17px;line-height:1.45;color:rgba(255,255,255,.8)">Un especialista revisa tu caso de aplicación.</p>
+        </div>
+        <button type="button" onClick="{{ openContact }}" style="align-self:flex-start;height:48px;padding:0 24px;border-radius:999px;border:0;background:#fff;color:var(--blue-950);display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer" style-hover="background:var(--blue-100)">Consulta a un especialista →</button>
+      </div>
+      <div aria-hidden="true" style="position:relative;height:{{ closeVisH }};border-radius:18px;background:#fff;box-shadow:var(--shadow-lg);overflow:hidden;pointer-events:none;transform-origin:50% 100%;transition:transform .7s cubic-bezier(.3,.7,.2,1);transform:{{ chatScale }}"><div style="position:absolute;inset:0;padding:14px;color:var(--text-primary);display:flex;flex-direction:column;gap:7px;font-size:11px;line-height:15px">
+        <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border-subtle)"><span style="width:24px;height:24px;border-radius:50%;background:var(--blue-950);color:#fff;display:grid;place-items:center;font-family:var(--font-mono);font-size:9px">AC</span><span style="font-size:12px">Chat técnico</span><span style="margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--blue-500)"></span></div>
+        <div style="align-self:flex-start;max-width:85%;background:var(--surface-warm);padding:6px 10px;border-radius:12px 12px 12px 4px;transition:opacity .3s ease,transform .3s cubic-bezier(.3,.7,.2,1);opacity:{{ cs1O }};transform:{{ cs1T }}">¿Qué plaga y en qué entorno?</div>
+        <div style="align-self:flex-end;max-width:80%;background:var(--blue-700);color:#fff;padding:6px 10px;border-radius:12px 12px 4px 12px;transition:opacity .3s ease,transform .3s cubic-bezier(.3,.7,.2,1);opacity:{{ cs2O }};transform:{{ cs2T }}">Cucarachas, planta de alimentos</div>
+        
+        <div style="display:grid;align-self:stretch"><div style="grid-area:1/1;align-self:start;justify-self:start;transition:opacity .2s;opacity:{{ csTypO }};display:flex;gap:3px;padding:8px 10px;border-radius:12px 12px 12px 4px;background:var(--surface-warm)"><span style="width:5px;height:5px;border-radius:50%;background:var(--blue-700);opacity:.5"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--blue-700);opacity:.75"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--blue-700)"></span></div><div style="grid-area:1/1;justify-self:start;max-width:88%;display:flex;flex-direction:column;gap:5px;background:var(--surface-warm);padding:6px;border-radius:12px 12px 12px 4px;transition:opacity .3s ease,transform .3s cubic-bezier(.3,.7,.2,1);opacity:{{ cs3O }};transform:{{ cs3T }}"><span style="padding:0 4px">Revisa el programa de control para industria alimentaria:</span><span style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:#fff;border:1px solid var(--border-subtle)"><span style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;background:var(--blue-50);color:var(--blue-800)">PLAGA</span><span style="flex:1">Programa · Cucarachas</span></span><span style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:#fff;border:1px solid var(--border-subtle)"><span style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;background:var(--blue-50);color:var(--blue-800)">PDF</span><span style="flex:1">Hoja de seguridad</span></span></div>
+        </div>
+        <div style="margin-top:auto;height:34px;flex:none;border-radius:999px;border:1px solid var(--border-default);display:flex;align-items:center;gap:6px;padding:0 3px 0 12px;color:var(--text-muted);font-size:11px"><span style="flex:1">Escribe tu consulta</span><span style="width:28px;height:28px;border-radius:50%;background:var(--blue-700);color:#fff;display:grid;place-items:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 Footer -->
+<footer data-dark="" data-screen-label="09 Footer" style="background:var(--blue-950);color:#fff;border-radius:clamp(28px,4vw,48px) clamp(28px,4vw,48px) 0 0">
+  <div style="max-width:1360px;margin:0 auto;padding:clamp(48px,7vw,88px) clamp(16px,4vw,40px) 28px">
+    <div style="display:grid;grid-template-columns:{{ footCols }};gap:clamp(32px,4vw,48px) 24px">
+      <div style="display:flex;flex-direction:column;gap:24px;grid-column:{{ footSpan }}">
+        <div style="display:flex;align-items:center;gap:14px">
+          <img src="assets/logo-anasac-reverse.png" alt="Anasac" style="height:34px;width:auto;display:block">
+          <span style="width:1px;height:28px;background:rgba(255,255,255,.25)"></span>
+          <span style="font-size:24px;font-weight:500;letter-spacing:-.02em;color:var(--blue-200);line-height:1">Control</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <a href="#" aria-label="Instagram" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);color:#fff;display:grid;place-items:center" style-hover="background:var(--blue-300);border-color:var(--blue-300);color:var(--blue-950)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"></circle></svg></a>
+          <a href="#" aria-label="Facebook" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);color:#fff;display:grid;place-items:center" style-hover="background:var(--blue-300);border-color:var(--blue-300);color:var(--blue-950)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21z"></path></svg></a>
+          <a href="#" aria-label="YouTube" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);color:#fff;display:grid;place-items:center" style-hover="background:var(--blue-300);border-color:var(--blue-300);color:var(--blue-950)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="4"></rect><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"></path></svg></a>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:16px">
+        <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.6)">Sitio</span>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Soluciones</a>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Productos</a>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Biblioteca técnica</a>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Academia</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:16px">
+        <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.6)">Atención</span>
+        <button type="button" onClick="{{ openContact }}" style="padding:0;border:0;background:transparent;font:inherit;text-align:left;color:rgba(255,255,255,.75);cursor:pointer" style-hover="color:#fff">Contacto</button>
+        <a href="#donde-comprar" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Dónde comprar</a>
+        <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:10px">Anasac</span>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Sustentabilidad ↗</a>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Trabaja con nosotros ↗</a>
+        <a href="#" style="color:rgba(255,255,255,.75)" style-hover="color:#fff">Políticas y privacidad</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;grid-column:{{ footSpan }}">
+        <span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.6)">Newsletter</span>
+        <span style="font-size:clamp(18px,1.6vw,22px);line-height:1.2;letter-spacing:-.02em">Suscríbete al newsletter</span>
+        <form onSubmit="{{ noSubmit }}" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+          <input type="email" placeholder="Tu correo" aria-label="Correo" style="flex:1 1 200px;min-width:0;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06);color:#fff;padding:0 20px;font:inherit;font-size:16px;outline:none" style-focus="border-color:var(--blue-300)">
+          <button type="submit" style="height:44px;padding:0 22px;border-radius:999px;border:0;background:var(--blue-300);color:var(--blue-950);font:inherit;font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer" style-hover="background:var(--blue-200)">Suscribirme</button>
+        </form>
+      </div>
+    </div>
+    <div style="margin-top:clamp(40px,6vw,72px);padding-top:24px;padding-right:clamp(0px,9vw,120px);border-top:1px solid rgba(255,255,255,.14);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;font-size:14px;color:rgba(255,255,255,.6)">
+      <span>© Anasac Control · Todos los productos cuentan con registro sanitario vigente.</span>
+      <span>Desarrollado por <a href="https://deltadigital.cl" target="_blank" rel="noopener" style="color:#fff">DeltaDigital</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile menu -->
+<sc-if value="{{ menu }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:70;background:rgba(8,20,42,.4);animation:ctrlFade .2s"></div>
+  <nav aria-label="Menú" style="position:fixed;top:0;left:0;bottom:0;z-index:71;width:min(360px,88vw);background:var(--surface-base);display:flex;flex-direction:column;overflow-y:auto;animation:ctrlSlideL .28s var(--ease-out)">
+    <div style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle)"><span style="font-size:17px;font-weight:500;color:var(--blue-800)">Menú</span><button type="button" aria-label="Cerrar menú" onClick="{{ closeMenu }}" style="width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--text-primary);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+    <div style="padding:8px 20px 24px;display:flex;flex-direction:column">
+      <a href="#" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--blue-700)">Inicio</a>
+      <a href="#plagas" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--text-primary)">Soluciones <span style="color:var(--text-muted)">→</span></a>
+      <a href="#portafolio" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--text-primary)">Productos <span style="color:var(--text-muted)">→</span></a>
+      <a href="#biblioteca" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--text-primary)">Biblioteca técnica</a>
+      <a href="#academia" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--text-primary)">Academia</a>
+      <a href="#donde-comprar" onClick="{{ closeMenu }}" style="min-height:52px;display:flex;align-items:center;border-bottom:1px solid var(--border-subtle);font-size:20px;letter-spacing:-.02em;color:var(--text-primary)">Dónde comprar</a>
+      <span style="margin-top:24px;margin-bottom:6px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--text-muted)">Marcas Anasac</span>
+      <div style="min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;margin:0 -12px;border-radius:12px;background:var(--blue-50);color:var(--blue-800)">Anasac Control <span style="font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--blue-700);color:#fff">Estás aquí</span></div>
+      <a href="https://asuleiman-delta.github.io/anasac-jardin/" target="_blank" rel="noopener" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;color:var(--text-primary)">Anasac Jardín <span style="color:var(--text-muted)">↗</span></a>
+      <a href="#" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;color:var(--text-primary)">Anasac Hogar <span style="color:var(--text-muted)">↗</span></a>
+      <a href="#" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;color:var(--text-primary)">Anasac Pet <span style="color:var(--text-muted)">↗</span></a>
+    </div>
+  </nav>
+</sc-if>
+
+<!-- Contacto · panel lateral -->
+<sc-if value="{{ contact }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeContact }}" style="position:fixed;inset:0;z-index:80;background:rgba(8,20,42,.4);animation:ctrlFade .2s"></div>
+  <aside role="dialog" aria-label="Contacto" style="position:fixed;top:0;right:0;bottom:0;z-index:81;width:min(460px,100vw);background:var(--surface-base);box-shadow:-24px 0 60px -20px rgba(8,20,42,.35);display:flex;flex-direction:column;animation:ctrlSlide .3s var(--ease-out)">
+    <div style="padding:16px 12px 16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle)">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--blue-700)">Contacto</span><span style="font-size:22px;letter-spacing:-.03em">Escríbenos</span></div>
+      <button type="button" aria-label="Cerrar contacto" onClick="{{ closeContact }}" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface-warm);color:var(--text-primary);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--surface-sand)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+    <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+      <form onSubmit="{{ sendContact }}" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;color:var(--text-secondary)">Motivo</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ motivos }}" as="m" hint-placeholder-count="3"><button type="button" data-m="{{ m.n }}" onClick="{{ pickMotivo }}" aria-pressed="{{ m.on }}" style="min-height:40px;padding:0 14px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font:inherit;font-size:14px;cursor:pointer">{{ m.n }}</button></sc-for></div>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text-secondary)">Nombre<input required="" style="height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--border-default);background:#fff;font:inherit;font-size:16px;color:var(--text-primary);outline:none" style-focus="border-color:var(--blue-600)"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text-secondary)">Empresa<input style="height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--border-default);background:#fff;font:inherit;font-size:16px;color:var(--text-primary);outline:none" style-focus="border-color:var(--blue-600)"></label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text-secondary)">Correo<input type="email" required="" style="height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--border-default);background:#fff;font:inherit;font-size:16px;color:var(--text-primary);outline:none" style-focus="border-color:var(--blue-600)"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text-secondary)">Teléfono<input type="tel" style="height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--border-default);background:#fff;font:inherit;font-size:16px;color:var(--text-primary);outline:none" style-focus="border-color:var(--blue-600)"></label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text-secondary)">Mensaje<textarea rows="4" placeholder="Plaga, entorno y producto, si ya lo tienes" style="padding:12px 16px;border-radius:12px;border:1px solid var(--border-default);background:#fff;font:inherit;font-size:16px;color:var(--text-primary);outline:none;resize:vertical" style-focus="border-color:var(--blue-600)"></textarea></label>
+        <button type="submit" style="height:52px;border-radius:999px;border:0;background:var(--blue-700);color:#fff;font:inherit;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:4px" style-hover="background:var(--blue-800)">Enviar consulta</button>
+        <span style="font-size:13px;line-height:1.45;color:var(--text-muted)">Tu búsqueda y la página actual se mantienen abiertas detrás de este panel.</span>
+      </form>
+    </sc-if>
+    <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;padding:40px 24px;display:flex;flex-direction:column;gap:14px;align-items:flex-start">
+        <span style="width:48px;height:48px;border-radius:50%;background:var(--blue-100);color:var(--blue-700);display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>
+        <span style="font-size:24px;letter-spacing:-.03em">Consulta enviada</span>
+        <span style="font-size:16px;line-height:1.45;color:var(--text-secondary)">Un especialista te contactará. Mientras, puedes seguir navegando.</span>
+        <button type="button" onClick="{{ closeContact }}" style="margin-top:8px;height:44px;padding:0 22px;border-radius:999px;border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);font:inherit;font-size:15px;cursor:pointer">Volver</button>
+      </div>
+    </sc-if>
+  </aside>
+</sc-if>
+
+<!-- Chat técnico -->
+<div role="dialog" aria-label="Chat técnico" style="position:fixed;right:clamp(16px,2.4vw,32px);bottom:calc(clamp(16px,2.4vw,32px) + 70px);z-index:61;width:min(400px,calc(100vw - 32px));height:min(600px,calc(100svh - 150px));border-radius:24px;background:#fff;box-shadow:0 0 0 1px var(--border-subtle),0 30px 70px -20px rgba(8,20,42,.45);display:flex;flex-direction:column;overflow:hidden;transform-origin:100% 100%;transition:opacity .25s ease,transform .3s cubic-bezier(.3,.7,.2,1);opacity:{{ chatO }};transform:{{ chatT }};pointer-events:{{ chatPE }};visibility:{{ chatVis }}">
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 12px 14px 18px;border-bottom:1px solid var(--border-subtle);background:var(--surface-base)">
+    <span style="width:36px;height:36px;border-radius:50%;background:var(--blue-950);color:#fff;display:grid;place-items:center;font-family:var(--font-mono);font-size:12px">AC</span>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;letter-spacing:-.01em">Chat técnico</span><span style="font-size:12px;color:var(--text-muted)">Responde con contenido de Anasac Control</span></div>
+    <button type="button" aria-label="Cerrar chat" onClick="{{ closeChat }}" style="width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--text-primary);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--surface-warm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+  </div>
+  <div ref="{{ chatListRef }}" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:22px;overscroll-behavior:contain">
+    <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="1">
+      <div style="align-self:{{ m.align }};max-width:86%;display:flex;flex-direction:column;gap:6px;padding:{{ m.pad }};border-radius:{{ m.radius }};background:{{ m.bg }};color:{{ m.color }}">
+        <span style="padding:0 4px">{{ m.text }}</span>
+        <sc-for list="{{ m.cards }}" as="c" hint-placeholder-count="0"><a href="#" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:#fff;border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px" style-hover="border-color:var(--blue-500);color:var(--text-primary)"><span style="font-family:var(--font-mono);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--blue-50);color:var(--blue-800)">{{ c.k }}</span><span style="flex:1">{{ c.t }}</span><span style="color:var(--blue-700)">→</span></a></sc-for>
+      </div>
+    </sc-for>
+    <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;padding:10px 14px;border-radius:16px 16px 16px 6px;background:var(--surface-warm);font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">consultando fichas…</div></sc-if>
+    <sc-if value="{{ showChips }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"><sc-for list="{{ chips }}" as="q" hint-placeholder-count="4"><button type="button" data-q="{{ q }}" onClick="{{ sendChip }}" style="padding:8px 12px;border-radius:999px;border:1px solid var(--blue-200);background:var(--blue-50);font:inherit;font-size:13px;color:var(--blue-800);cursor:pointer;text-align:left" style-hover="background:var(--blue-100)">{{ q }}</button></sc-for></div></sc-if>
+  </div>
+  <form onSubmit="{{ sendChat }}" style="display:flex;align-items:center;gap:6px;margin:0 14px 14px;height:48px;padding:0 4px 0 18px;border-radius:999px;border:1px solid var(--border-default);background:#fff">
+    <input value="{{ draft }}" onChange="{{ onDraft }}" placeholder="Pregunta por dosis, plaga o documento" aria-label="Mensaje" style="flex:1;min-width:0;height:100%;border:0;outline:none;background:transparent;font:inherit;font-size:16px;color:var(--text-primary)">
+    <button type="submit" aria-label="Enviar" style="width:40px;height:40px;flex:none;border-radius:50%;border:0;background:var(--blue-700);color:#fff;display:grid;place-items:center;cursor:pointer" style-hover="background:var(--blue-800)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
+  </form>
+</div>
+<button type="button" aria-label="Chat técnico" aria-expanded="{{ chat }}" onClick="{{ toggleChat }}" onMouseEnter="{{ fabIn }}" onMouseLeave="{{ fabOut }}" onFocus="{{ fabIn }}" onBlur="{{ fabOut }}" style="position:fixed;right:clamp(16px,2.4vw,32px);bottom:clamp(16px,2.4vw,32px);z-index:60;height:56px;min-width:56px;box-sizing:border-box;padding:0 16px;border-radius:999px;border:0;background:{{ fabBg }};color:{{ fabFg }};display:flex;align-items:center;gap:0;box-shadow:var(--shadow-lg);font:inherit;font-size:15px;cursor:pointer;transition:background .3s ease,color .3s ease" style-hover="background:{{ fabHov }}">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{ fabIcon }}"></path></svg>
+  <span style="max-width:{{ fabW }};opacity:{{ fabO }};margin-left:{{ fabG }};white-space:nowrap;overflow:hidden;transition:max-width .3s cubic-bezier(.2,.7,.2,1),opacity .2s ease,margin .3s ease">Chat técnico</span>
+</button>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pestImages&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Plagas&quot;},&quot;sciNames&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Plagas&quot;}}">
+class Component extends DCLogic {
+  state = { heroPlay: true, loading: true, w: typeof window !== 'undefined' ? window.innerWidth : 1440, mega: null, marcas: false, q: '', sf: false, contact: false, sent: false, motivo: 'Asesoría técnica', menu: false, cat: 'Todos', heroPlay: !(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches), heroHover: false, heroIdx: 0, mapH: false, cs: 1, csTyping: false, chat: false, draft: '', typing: false,
+    msgs: [{ r: 'a', text: 'Hola. Soy el chat técnico de Anasac Control. Consulta por plaga, entorno, producto, dosis o documentos.' }] };
+  envRef = React.createRef();
+  heroTrackRef = React.createRef();
+  heroScroll(d) { const n = this.heroN; this.setState(s => ({ prevIdx: s.heroIdx || 0, heroIdx: ((s.heroIdx || 0) + d + n) % n, wipeK: (s.wipeK || 0) + 1 })); }
+  heroN = 3;
+  chatListRef = React.createRef();
+  componentDidMount() {
+    this.onR = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('resize', this.onR);
+    this.onK = e => { if (e.key === 'Escape') this.setState({ mega: null, marcas: false, contact: false, menu: false, chat: false }); };
+    window.addEventListener('keydown', this.onK);
+    this._hp = null;
+    const t0 = Date.now();
+    const done = () => { if (this._ldDone) return; this._ldDone = true; const wait = Math.max(0, 700 - (Date.now() - t0)); this._ldT = setTimeout(() => { this.setState({ loading: 'fade' }); this._ldT2 = setTimeout(() => this.setState({ loading: false }), 650); }, wait); };
+    if (document.readyState === 'complete') done(); else { this._onLoad = done; window.addEventListener('load', done, { once: true }); this._ldMax = setTimeout(done, 2500); }
+    this._rvT = setTimeout(this.setupReveal, 60);
+    this.fabCheck = () => { const y = window.innerHeight - 44; const dark = Array.from(document.querySelectorAll('[data-dark]')).some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y && r.right >= window.innerWidth - 120; }); if (dark !== !!this.state.fabDark) this.setState({ fabDark: dark }); };
+    window.addEventListener('scroll', this.fabCheck, { passive: true }); window.addEventListener('resize', this.fabCheck); setTimeout(this.fabCheck, 100);
+    this.smoothInit();
+  }
+  rootRef = React.createRef();
+  setupReveal = () => {
+    if (this._revealed) return;
+    const root = this.rootRef.current;
+    if (!root || typeof IntersectionObserver === 'undefined') return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this._revealed = true;
+    const targets = [];
+    const ok = el => { const cs = getComputedStyle(el); return cs.position !== 'absolute' && cs.position !== 'fixed' && cs.display !== 'none' && !el.style.transform; };
+    root.querySelectorAll('section, footer').forEach(sec => {
+      Array.from(sec.children).filter(el => el.tagName === 'DIV' && !el.hasAttribute('aria-hidden') && ok(el)).forEach(inner => {
+        let i = 0;
+        Array.from(inner.children).forEach(ch => {
+          if (!ok(ch)) return;
+          if (getComputedStyle(ch).display === 'grid' && ch.children.length >= 3) Array.from(ch.children).forEach((g, k) => { if (ok(g)) targets.push([g, k]); });
+          else targets.push([ch, i++]);
+        });
+      });
+    });
+    const ease = 'cubic-bezier(.2,.7,.2,1)';
+    const show = el => { el.style.opacity = '1'; el.style.transform = 'none'; el.style.filter = 'blur(0)'; clearTimeout(el._rv); el._rv = setTimeout(() => { el.style.opacity = ''; el.style.transform = ''; el.style.filter = ''; el.style.transition = ''; }, 1500); };
+    this._io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { show(en.target); this._io.unobserve(en.target); } }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    targets.forEach(([el, k]) => {
+      const d = (Math.min(k, 7) * 0.07).toFixed(2);
+      el.style.opacity = '0'; el.style.transform = 'translateY(28px)'; el.style.filter = 'blur(10px)';
+      el.style.transition = 'opacity .7s ' + ease + ' ' + d + 's, transform .8s ' + ease + ' ' + d + 's, filter .8s ' + ease + ' ' + d + 's';
+      this._io.observe(el);
+    });
+  };
+  smoothInit = () => {
+    if (window.matchMedia && (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(pointer: coarse)').matches)) return;
+    this._sAnim = false;
+    this.onWheel = e => {
+      if (e.ctrlKey || e.defaultPrevented || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      for (let el = e.target; el && el.nodeType === 1 && el !== document.body; el = el.parentElement) { const oy = getComputedStyle(el).overflowY; if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1) return; }
+      e.preventDefault();
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
+      if (!this._sAnim) this._sTarget = this._sCur = window.scrollY;
+      this._sTarget = Math.max(0, Math.min(max, this._sTarget + d));
+      if (!this._sAnim) { this._sAnim = true; this._sRaf = requestAnimationFrame(this.smoothTick); }
+    };
+    window.addEventListener('wheel', this.onWheel, { passive: false });
+  };
+  smoothTick = () => {
+    const diff = this._sTarget - this._sCur;
+    this._sCur += diff * 0.1;
+    if (Math.abs(diff) < 0.5) { this._sCur = this._sTarget; this._sAnim = false; }
+    window.scrollTo({ top: this._sCur, behavior: 'instant' });
+    if (this._sAnim) this._sRaf = requestAnimationFrame(this.smoothTick);
+  };
+  componentWillUnmount() { window.removeEventListener('scroll', this.fabCheck); window.removeEventListener('resize', this.fabCheck); clearInterval(this._hp); clearTimeout(this._ldT); clearTimeout(this._ldT2); clearTimeout(this._ldMax); clearTimeout(this._rvT); if (this._onLoad) window.removeEventListener('load', this._onLoad); if (this.onWheel) window.removeEventListener('wheel', this.onWheel); cancelAnimationFrame(this._sRaf); if (this._io) this._io.disconnect(); window.removeEventListener('resize', this.onR); window.removeEventListener('keydown', this.onK); }
+  componentDidUpdate(_, ps) { if (ps.msgs.length !== this.state.msgs.length || ps.typing !== this.state.typing) { const el = this.chatListRef.current; if (el) el.scrollTop = el.scrollHeight; } }
+
+  reply(q) {
+    const l = q.toLowerCase();
+    let text = 'Puedo orientarte con el portafolio y los documentos. Para una recomendación de aplicación específica, un especialista revisa tu caso.';
+    let cards = [{ k: 'CTA', t: 'Consulta a un especialista' }];
+    if (l.includes('cucarach')) { text = 'Para Blattella germanica en cocinas industriales, el programa de control combina alternativas por rol: cebos en gel, residuales y polvos. La dosis depende de la formulación y está en la etiqueta y ficha técnica de cada producto.'; cards = [{ k: 'PLAGA', t: 'Programa de control · Cucarachas' }, { k: 'ENTORNO', t: 'Industria alimentaria' }]; }
+    else if (l.includes('document') || l.includes('ficha') || l.includes('isp')) { text = 'Cada ficha de producto incluye 5 descargas: ficha ISP, resolución ISP, ficha técnica, hoja de seguridad y etiqueta. Dime el producto o el principio activo y te llevo a ella.'; cards = [{ k: 'PDF', t: 'Cómo leer una hoja de seguridad' }]; }
+    else if (l.includes('roedor') || l.includes('rodentic') || l.includes('bodega')) { text = 'En bodegas y silos el manejo de roedores suele combinar estaciones de cebo y captura física. Revisa las restricciones de uso en la resolución ISP de cada rodenticida.'; cards = [{ k: 'PLAGA', t: 'Programa de control · Roedores' }, { k: 'CURSO', t: 'Uso seguro de rodenticidas' }]; }
+    return { r: 'a', text, cards };
+  }
+  ask(q) {
+    if (!q.trim()) return;
+    this.setState(s => ({ msgs: [...s.msgs, { r: 'u', text: q }], draft: '', typing: true }));
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState(s => ({ typing: false, msgs: [...s.msgs, this.reply(q)] })), 900);
+  }
+
+  renderVals() {
+    const { w, mega, q, cat } = this.state;
+    const mob = w < 1000, mid = w < 1200;
+    const showPestImg = this.props.pestImages ?? true, showSci = this.props.sciNames ?? true;
+    const pestsAll = [
+      ['Cucarachas', 'Blattella germanica · Periplaneta americana', 'Cucaracha en detalle'], ['Roedores', 'Rattus norvegicus · Mus musculus', 'Roedor en detalle'],
+      ['Moscas', 'Musca domestica', 'Mosca doméstica'], ['Chinches', 'Cimex lectularius', 'Chinche de cama'], ['Zancudos', 'Culex pipiens · Aedes spp.', 'Zancudo'],
+      ['Hormigas', 'Linepithema humile', 'Hormiga'], ['Arañas y otros rastreros'], ['Termitas e insectos de la madera'], ['Plagas de granos almacenados'], ['Avispas'], ['Aves'], ['Polillas']
+    ].map((p, i) => ({ n: p[0], s: p[1], ph: p[2], icon: ['uploads/cucarachas.png','uploads/roedores.png','uploads/moscas.png','uploads/chinches.png','uploads/zancudos.png','uploads/hormigas.png'][i], noIcon: i > 5, iconT: ['scale(1.3) translate(-2.8%,-4.8%)','scale(1.144) translateX(4.5%)','scale(1.154)','scale(1.13)','scale(1.125)','scale(1.116)'][i] || 'none', iconBg: i <= 5 ? `url("uploads/${['cucarachas','roedores','moscas','chinches','zancudos','hormigas'][i]}.png") center/contain no-repeat` : '', id: 'P-' + String(i + 1).padStart(2, '0'), slot: 'ctrl-pest-' + (i + 1) }));
+    const envs = [
+      ['Industria alimentaria', 'Planta de alimentos, aplicador en inspección'], ['Recintos hospitalarios', 'Pasillo hospitalario, técnico con equipo'],
+      ['Recintos educativos', 'Establecimiento educacional, inspección'], ['Supermercados y retail', 'Bodega de supermercado, monitoreo'],
+      ['Bodegas y silos', 'Silos o bodega de granos'], ['Planteles pecuarios', 'Plantel pecuario, aplicación'], ['Viviendas, oficinas y hoteles', 'Hotel u oficina, servicio profesional']
+    ].map((e, i) => ({ n: e[0], ph: e[1], img: 'uploads/' + ['alimentos','hospital','educacion','supermercado','bodega','pecuario','casa'][i] + '.png', id: 'E-' + String(i + 1).padStart(2, '0'), slot: 'ctrl-env-' + (i + 1) }));
+    const fam = ['Insecticidas', 'Rodenticidas', 'Equipos UV', 'Trampas y captura física', 'Repelentes', 'Fumigantes', 'Molusquicidas'].map((n, i) => ({ n, id: String(i + 1).padStart(2, '0') }));
+    const hyg = ['Detergentes', 'Desinfectantes'].map((n, i) => ({ n, id: String(i + 8).padStart(2, '0') }));
+    const allArts = [
+      { cat: 'Manejo integrado', t: 'Cómo diagnosticar una infestación de chinches antes de aplicar', m: '6 min de lectura' },
+      { cat: 'Normativa', t: 'Requisitos de registro ISP para uso profesional en industria alimentaria', m: '8 min de lectura' },
+      { cat: 'Técnica de aplicación', t: 'Calibración de equipos de aspersión: errores que reducen la eficacia', m: '5 min de lectura' }
+    ];
+    const articles = cat === 'Todos' ? allArts : allArts.filter(a => a.cat === cat);
+    const pill = on => ({ on, bd: on ? 'var(--blue-950)' : 'var(--border-default)', bg: on ? 'var(--blue-950)' : 'transparent', fg: on ? '#fff' : 'var(--text-primary)' });
+    const index = [...pestsAll.map(p => ({ label: p.n, type: 'Plaga' })), ...envs.map(e => ({ label: e.n, type: 'Entorno' })), ...[...fam, ...hyg].map(f => ({ label: f.n, type: 'Familia' })),
+      ...['Fipronil', 'Imidacloprid', 'Cipermetrina', 'Deltametrina', 'Brodifacoum', 'Bromadiolona'].map(label => ({ label, type: 'Principio activo' })), ...allArts.map(a => ({ label: a.t, type: 'Biblioteca' }))];
+    const ql = q.trim().toLowerCase();
+    const results = ql ? index.filter(r => r.label.toLowerCase().includes(ql)).slice(0, 6) : [];
+    const chatOpen = this.state.chat;
+    const cols = (d, m, t) => mob ? m : (mid ? t : d);
+    return {
+      heroDown: (e) => { this._drag = { x: e.clientX, y: e.clientY }; this._dragged = false; },
+      heroUp: (e) => { const d = this._drag; this._drag = null; if (!d) return; const dx = e.clientX - d.x, dy = e.clientY - d.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { this._dragged = true; this.heroScroll(dx < 0 ? 1 : -1); } },
+      heroCancel: () => { this._drag = null; },
+      heroNoDrag: (e) => e.preventDefault(),
+      heroClickGuard: (e) => { if (this._dragged) { e.preventDefault(); e.stopPropagation(); this._dragged = false; } },
+      rootRef: this.rootRef,
+      loaderOn: this.state.loading !== false, loaderOpacity: this.state.loading === 'fade' ? 0 : 1,
+      loaderBar: this._ldBar || (this._ldBar = React.createElement('div', { style: { width: '40%', height: '100%', borderRadius: 999, background: 'var(--blue-700)', animation: 'ldbar 1.1s cubic-bezier(.4,0,.2,1) infinite' } })),
+      isDesk: !mob, isMob: mob, showPestImg, showSci,
+      secPad: mob ? '56px' : 'clamp(72px,8vw,112px)',
+      pestCols: cols('repeat(6,minmax(0,1fr))', 'repeat(3,minmax(0,1fr))', 'repeat(3,minmax(0,1fr))'),
+      envW: mob ? '72vw' : (mid ? '300px' : 'calc((min(100vw,1360px) - 80px - 60px) / 4)'),
+      portCols: mid ? '1fr' : 'minmax(0,1fr) minmax(0,2fr)', famCols: mob ? '1fr' : 'repeat(2,minmax(0,1fr))',
+      portPad: mob ? '24px 20px' : 'clamp(32px,4vw,56px)', portRadius: mob ? '20px' : '32px',
+      acaPad: mob ? '28px 20px' : 'clamp(32px,4vw,64px)', acaCols: mid ? '1fr' : 'minmax(0,1fr) minmax(0,1.3fr)', courseCols: mob ? '1fr' : 'repeat(2,minmax(0,1fr))',
+      artCols: cols('repeat(3,minmax(0,1fr))', '1fr', 'repeat(2,minmax(0,1fr))'), artH: mob ? '0px' : '240px',
+      statCols: cols('repeat(4,minmax(0,1fr))', 'repeat(2,minmax(0,1fr))', 'repeat(2,minmax(0,1fr))'),
+      closeCols: mid ? '1fr' : 'repeat(2,minmax(0,1fr))', closeH: w < 600 ? '0px' : '300px', closeInner: w < 600 ? '1fr' : 'minmax(0,1.1fr) minmax(0,.9fr)', closeVisH: w < 600 ? '280px' : 'auto',
+      footCols: cols('minmax(0,1.3fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1.4fr)', 'repeat(2,minmax(0,1fr))', 'repeat(2,minmax(0,1fr))'), footSpan: mob ? '1 / -1' : 'auto',
+      fabBg: this.state.fabDark ? '#fff' : 'var(--blue-950)', fabFg: this.state.fabDark ? 'var(--blue-950)' : '#fff', fabHov: this.state.fabDark ? 'var(--blue-100)' : 'var(--blue-800)',
+      pests: pestsAll.slice(0, 6), allPests: pestsAll, envs, families: fam, hygiene: hyg,
+      filters: ['Plaga', 'Familia de producto', 'Principio activo', 'Formulación', 'Ámbito de uso', 'Formato'],
+      courses: [{ t: 'Manejo integrado de plagas urbanas', ph: 'Clase técnica', slot: 'ctrl-course-1', img: 'uploads/pasted-1794343354221-0.png' }, { t: 'Uso seguro de rodenticidas', ph: 'Aplicador en capacitación', slot: 'ctrl-course-2', img: 'uploads/pasted-1794343410027-0.png' }],
+      cats: ['Todos', 'Manejo integrado', 'Normativa', 'Técnica de aplicación', 'Buenas prácticas'].map(n => ({ n, ...pill(n === cat) })),
+      pickCat: e => this.setState({ cat: e.currentTarget.dataset.c }),
+      articles, noArticles: articles.length === 0,
+      stats: [{ v: '+70 años', l: 'de trayectoria en Chile' }, { v: 'Registros ISP', l: 'vigentes en todo el portafolio' }, { v: 'Cobertura nacional', l: 'Arica a Punta Arenas' }, { v: 'Asesoría técnica', l: 'equipo de especialistas en terreno' }],
+      ...(() => {
+        const pts = [
+          ['Sucursal Anasac Quilicura', 'Sucursal Anasac', 'Metropolitana', 'Quilicura', 'Av. Lo Echevers 550'],
+          ['Comercial Sanitaria Providencia', 'Distribuidor', 'Metropolitana', 'Providencia', 'Av. Providencia 2140'],
+          ['Distribuidora Sanitaria Maipú', 'Distribuidor', 'Metropolitana', 'Maipú', 'Av. Pajaritos 3120'],
+          ['Sanitarios Costa', 'Distribuidor', 'Valparaíso', 'Viña del Mar', '1 Norte 845'],
+          ['Agrocomercial del Maule', 'Distribuidor', 'Maule', 'Talca', '2 Sur 1280'],
+          ['Sucursal Anasac Concepción', 'Sucursal Anasac', 'Biobío', 'Concepción', 'Av. Los Carrera 2410'],
+          ['Distribuidora Sanitaria Norte', 'Distribuidor', 'Antofagasta', 'Antofagasta', 'Av. Argentina 1960']
+        ].map(p => ({ n: p[0], t: p[1], r: p[2], c: p[3], a: p[4] + ', ' + p[3], tagBg: p[1] === 'Distribuidor' ? 'var(--blue-100)' : 'var(--blue-700)', tagFg: p[1] === 'Distribuidor' ? 'var(--blue-800)' : '#fff' }));
+        const reg = this.state.dReg || 'Todas', com = this.state.dCom || 'Todas', tipo = this.state.dTipo || 'Todos';
+        const regs = ['Todas', ...new Set(pts.map(p => p.r))];
+        const coms = ['Todas', ...new Set(pts.filter(p => reg === 'Todas' || p.r === reg).map(p => p.c))];
+        const res = pts.filter(p => (reg === 'Todas' || p.r === reg) && (com === 'Todas' || p.c === com) && (tipo === 'Todos' || p.t === tipo)).slice(0, 3);
+        return { dReg: reg, dCom: com, dRegs: regs.map(n => ({ n })), dComs: coms.map(n => ({ n })), dRes: res, dNone: res.length === 0,
+          dTipos: ['Todos', 'Distribuidor', 'Sucursal Anasac'].map(n => ({ n, ...pill(n === tipo) })),
+          pickReg: e => this.setState({ dReg: e.target.value, dCom: 'Todas' }), pickCom: e => this.setState({ dCom: e.target.value }),
+          pickTipo: e => this.setState({ dTipo: e.currentTarget.dataset.t }) };
+      })(),
+      ...[1,2,3].reduce((o,k) => { const on = this.state.cs >= k; o['cs'+k+'O'] = on ? 1 : 0; o['cs'+k+'T'] = on ? 'none' : 'translateY(8px)'; return o; }, {}),
+      csTypO: this.state.csTyping ? 1 : 0, chatScale: this.state.chatH ? 'scale(1.04)' : 'none',
+      chatPrevOn: () => { this._cs && this._cs.forEach(clearTimeout); this.setState({ cs: 1, chatH: true }); this._cs = [setTimeout(() => this.setState({ cs: 2 }), 600), setTimeout(() => this.setState({ csTyping: true }), 1100), setTimeout(() => this.setState({ cs: 3, csTyping: false }), 1900)]; },
+      chatPrevOff: () => { this._cs && this._cs.forEach(clearTimeout); this.setState({ cs: 1, csTyping: false, chatH: false }); },
+      heroSecH: mid ? 'auto' : 'calc(100svh - 121px)', heroSecMin: mid ? '0px' : '640px',
+      heroCols: mid ? 'minmax(0,1fr)' : 'minmax(0,5fr) minmax(0,7fr)', heroRows: mid ? 'auto' : 'minmax(0,1fr)',
+      heroH: mid ? (mob ? '480px' : '560px') : '100%',
+      heroRadius: mid ? '24px' : 'clamp(160px,20vw,280px) clamp(28px,3vw,40px) clamp(28px,3vw,40px) clamp(28px,3vw,40px)',
+      heroCardW: mob ? 'min(265px,70vw)' : 'clamp(265px,22.5vw,310px)', heroCardHalf: mob ? 'min(132.5px,35vw)' : 'clamp(132.5px,11.25vw,155px)',
+      heroTrackRef: this.heroTrackRef,
+      wallT: 'translateX(' + (-(this.state.heroIdx || 0) * 100 / this.heroN) + '%)',
+      heroMiniW: mob ? '96px' : 'clamp(96px,7.4vw,112px)', heroCardInset: mob ? '12px' : 'clamp(16px,3vw,40px)',
+      heroPos: '0' + ((this.state.heroIdx || 0) + 1) + ' / 03', heroPest: ['Viviendas y oficinas', 'Bodegas y centros logísticos', 'Exteriores y perímetros'][this.state.heroIdx || 0],
+      ...(() => {
+        const idx = this.state.heroIdx || 0, prev = this.state.prevIdx, k = this.state.wipeK || 0, run = this.state.heroPlay && !this.state.heroHover;
+        const ph = [
+          ['uploads/magnific_hombre-agachado-fumigando-un-departamento_kspGuMZ16B.jpg', 'Aplicador profesional tratando una vivienda', '30% 55%', '20% 60%'],
+          ['uploads/magnific_hombre-fumigando-un-almacen-limpio_5jM2tTZKxe.jpg', 'Aplicador con equipo de protección en una bodega', '38% 50%', '70% 40%'],
+          ['uploads/magnific_hombre-fumigando-un-terreno_1lezEpCr4r.jpg', 'Aplicador realizando tratamiento en terreno', '32% 55%', '60% 70%']
+        ];
+        return {
+          heroPhotos: ph.map((p, i) => { const on = i === idx, was = i === prev && !on; return { src: p[0], alt: p[1], pos: p[2], orig: p[3],
+            z: on ? 2 : was ? 1 : 0, clip: on || was ? 'inset(0 0 0 0)' : 'inset(0 0 0 100%)', cDur: on ? '1.1s' : '0s', cDel: on ? '0s' : '1.15s',
+            kb: on ? 'scale(1) translate3d(0,0,0)' : was ? 'scale(1.05) translate3d(-3%,0,0)' : 'scale(1.16) translate3d(2%,1%,0)',
+            kbDur: on ? '7s' : was ? '1.1s' : '0s', kbDel: on || was ? '0s' : '1.15s', fx: was ? 'brightness(.7)' : 'none' }; }),
+          heroEdge: prev == null ? null : React.createElement('span', { key: 'w' + k, 'aria-hidden': true, style: { position: 'absolute', top: 0, bottom: 0, left: '100%', width: '2px', marginLeft: '-1px', zIndex: 5, background: '#fff', boxShadow: '0 0 28px 8px rgba(255,255,255,.5)', opacity: 0, animation: 'ctrlWipe 1.1s cubic-bezier(.7,0,.2,1) forwards' } }),
+          heroLabel: React.createElement('span', { key: 'l' + idx, style: { fontSize: '15px', letterSpacing: '-.01em', animation: 'ctrlLbl .6s cubic-bezier(.2,.7,.2,1) .35s both' } }, ['Viviendas y oficinas', 'Bodegas y centros logísticos', 'Exteriores y perímetros'][idx]),
+          heroBars: ph.map((p, i) => ({ fill: i < idx ? React.createElement('span', { style: { position: 'absolute', inset: 0, background: '#fff' } })
+            : i === idx ? React.createElement('span', { key: 'b' + k + (this.state.heroPlay ? 'p' : 's'), onAnimationEnd: () => this.heroScroll(1), style: { position: 'absolute', inset: 0, background: '#fff', transformOrigin: 'left', animation: this.state.heroPlay ? 'ctrlBar 6.5s linear both' : 'none', animationPlayState: run ? 'running' : 'paused' } }) : null }))
+        };
+      })(),
+      heroSlides: [
+        { slot: 'ctrl-hero-pest-3', ph: 'Mosca', prodSlot: 'ctrl-hero-prod-3', prod: 'Equipo UV de captura', prodMeta: 'Musca domestica', guide: 'Tratamiento de rastreros en interiores', guideMeta: 'Viviendas, oficinas y hoteles' },
+        { slot: 'ctrl-hero-pest-1', ph: 'Cucaracha', prodSlot: 'ctrl-hero-prod-1', prod: 'Cebo en gel insecticida', prodMeta: 'Blattella germanica', guide: 'Programa de control en bodegas', guideMeta: 'Bodegas y centros logísticos' },
+        { slot: 'ctrl-hero-pest-2', ph: 'Ratón', prodSlot: 'ctrl-hero-prod-2', prod: 'Bloque parafinado rodenticida', prodMeta: 'Rattus spp. · Mus musculus', guide: 'Aplicación perimetral en exteriores', guideMeta: 'Terreno y perímetros' }
+      ].map((s, i) => { const on = i === (this.state.heroIdx || 0); const img = ''; const flip = i === 1; return { ...s, img, noImg: !img, panelX: ((i + .5) / 3 * 100) + '%', imgRot: i === 1 ? 'translate(18%,-12%) scale(1.6)' : i === 2 ? 'translateX(6%)' : 'translate(-4%,0%)', pW: i === 2 ? 'auto' : 'min(62cqw,72vh,560px)', pH: i === 2 ? '100%' : 'auto', pAR: i === 2 ? '2220/1771' : '1', pIn: i === 2 ? '0' : '21%', iIn: i === 2 ? '0' : '-6%', iW: i === 2 ? '100%' : '112%', iFit: 'contain', iPos: i === 2 ? 'center' : 'center 35%', flyRef: img && i < 2 ? ((this.flyRefs = this.flyRefs || [])[i] || (this.flyRefs[i] = React.createRef())) : null, pTop: flip ? 'auto' : '2%', pBot: flip ? '8%' : 'auto', gTop: flip ? '6%' : 'auto', gBot: flip ? 'auto' : '19%', prods: [['Equipo UV de captura','Cebo granulado para moscas','Insecticida de acción residual'],['Cebo en gel insecticida','Insecticida microencapsulado','Trampa adhesiva de monitoreo'],['Bloque parafinado rodenticida','Estación de cebo con llave','Trampa mecánica de captura']][i].map((name, k) => { const fan = false; const pimg = k === 0 ? (['uploads/pasted-1794342678558-0.png', 'uploads/pasted-1794342504593-0.png', 'uploads/pasted-1794342482437-0.png'][i] || '') : ''; return { name, img: pimg, noImg: !pimg, vis: k ? 'hidden' : 'visible', pe: k || !on ? 'none' : 'auto', slot: s.prodSlot + (k ? '-' + (k + 1) : ''), pos: k ? 'absolute' : 'relative', z: 3 - k, more: k ? '' : '+2', moreO: fan ? 0 : 1, dl: fan ? (k * .04) + 's' : '0s', t: k === 0 ? 'none' : fan ? 'translateX(' + (k * 78) + '%) translateY(' + (k * 6) + '%) rotate(' + (k * 7) + 'deg)' : 'translate(' + (k * 6) + 'px,' + (k * -6) + 'px) rotate(' + (k * 3) + 'deg)' }; }), mR: img ? '0' : '50%', mO: img ? 'visible' : 'hidden', o: on ? 1 : 0, pe: on ? 'auto' : 'none', pT: on ? 'scale(1)' : 'scale(.92)', cT: on ? 'none' : 'translateY(12px)', d1: on ? '.25s' : '0s', d2: on ? '.4s' : '0s', d3: on ? '.55s' : '0s', badge: ['uploads/moscas.png', 'uploads/cucarachas-17b3180b.png', 'uploads/roedores.png'][i], bT: ['scale(1.333)', 'scale(1.5) translate(-3.8%,-4.8%)', 'scale(1.466) translate(5.5%,0)'][i], bTop: i === 1 ? 'auto' : '20%', bBot: i === 1 ? '20%' : 'auto' }; }),
+      heroCards: [
+        { k: '¿Qué plaga estás controlando?', d: 'Entra por la plaga y llega al producto registrado para ella.', href: '#plagas' },
+        { k: '¿Dónde aplicas?', d: 'Soluciones por entorno de aplicación y su normativa.', href: '#plagas' },
+        { k: 'Portafolio por categoría', d: 'Si ya sabes el tipo de producto, entra directo.', href: '#portafolio' },
+        { k: 'Academia Anasac', d: 'Cursos técnicos con certificación, dictados por especialistas.', href: '#academia' },
+        { k: 'Biblioteca técnica', d: 'Manejo integrado, normativa y técnica de aplicación.', href: '#biblioteca' }
+      ],
+      heroPrev: () => this.heroScroll(-1), heroNext: () => this.heroScroll(1),
+      heroTogglePlay: () => this.setState(s => ({ heroPlay: !s.heroPlay })),
+      heroPlayLabel: this.state.heroPlay ? 'Pausar' : 'Reproducir',
+      heroPlayIcon: this.state.heroPlay ? 'M9 6v12M15 6v12' : 'M8 5.5v13l10.5-6.5z',
+      heroHoverOn: () => this.setState({ heroHover: true }), fanOn: () => this.setState({ fan: true }), fanOff: () => this.setState({ fan: false }), heroHoverOff: () => { this.setState({ heroHover: false }); if (this.heroTrackRef.current) this.heroTrackRef.current.style.transform = 'none'; const f = ((this.flyRefs || [])[this.state.heroIdx || 0] || {}).current; if (f) f.style.transform = 'translate3d(0,0,0) rotate(0deg)'; },
+      heroMove: (e) => { const r0 = e.currentTarget.getBoundingClientRect(), tx = (e.clientX - r0.left) / r0.width - .5, ty = (e.clientY - r0.top) / r0.height - .5, tg = this.heroTrackRef.current; if (tg) tg.style.transform = 'translate3d(' + (tx * -20) + 'px,' + (ty * -14) + 'px,0) scale(1.015)'; const f = ((this.flyRefs || [])[this.state.heroIdx || 0] || {}).current; if (!f) return; const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; f.style.transform = `translate3d(${x * 44}px,${y * 32}px,0) rotate(${x * 6}deg)`; },
+      envRef: this.envRef,
+      envPrev: () => this.envRef.current && this.envRef.current.scrollBy({ left: -this.envRef.current.clientWidth * .75, behavior: 'smooth' }),
+      envNext: () => this.envRef.current && this.envRef.current.scrollBy({ left: this.envRef.current.clientWidth * .75, behavior: 'smooth' }),
+      // header
+      marcas: this.state.marcas, marcasBg: this.state.marcas ? 'var(--surface-warm)' : 'transparent',
+      toggleMarcas: () => this.setState(s => ({ marcas: !s.marcas, mega: null })),
+      megaSol: mega === 'sol', megaProd: mega === 'prod', megaAny: !!mega,
+      solBg: mega === 'sol' ? 'var(--surface-warm)' : 'transparent', prodBg: mega === 'prod' ? 'var(--surface-warm)' : 'transparent',
+      solRot: mega === 'sol' ? 'rotate(180deg)' : 'none', prodRot: mega === 'prod' ? 'rotate(180deg)' : 'none',
+      openSol: () => this.setState({ mega: 'sol', marcas: false }), openProd: () => this.setState({ mega: 'prod', marcas: false }),
+      toggleSol: () => this.setState(s => ({ mega: s.mega === 'sol' ? null : 'sol' })), toggleProd: () => this.setState(s => ({ mega: s.mega === 'prod' ? null : 'prod' })),
+      closeMega: () => this.setState({ mega: null, marcas: false }), closeMegaOnly: () => this.state.mega && this.setState({ mega: null }),
+      q, onQ: e => this.setState({ q: e.target.value }), sf: this.state.sf,
+      onSF: () => this.setState({ sf: true, mega: null, marcas: false }), onSB: () => setTimeout(() => this.setState({ sf: false }), 120),
+      keep: e => e.preventDefault(), pickQ: e => this.setState({ q: e.currentTarget.dataset.q }),
+      submitSearch: e => e.preventDefault(), noSubmit: e => e.preventDefault(),
+      searchRing: this.state.sf ? 'var(--blue-600)' : 'var(--border-default)',
+      qEmpty: !ql, qHas: !!ql, results, noResults: !!ql && results.length === 0,
+      frequent: ['Cucarachas en cocina industrial', 'Fipronil', 'Rodenticidas', 'Chinches', 'Hoja de seguridad', 'Equipos UV'],
+      menu: this.state.menu, openMenu: () => this.setState({ menu: true }), closeMenu: () => this.setState({ menu: false }),
+      // contact
+      contact: this.state.contact, sent: this.state.sent, notSent: !this.state.sent,
+      openContact: () => this.setState({ contact: true, sent: false, mega: null, marcas: false, menu: false }), closeContact: () => this.setState({ contact: false }),
+      sendContact: e => { e.preventDefault(); this.setState({ sent: true }); },
+      motivos: ['Asesoría técnica', 'Comercial', 'Otro'].map(n => ({ n, ...pill(n === this.state.motivo) })),
+      pickMotivo: e => this.setState({ motivo: e.currentTarget.dataset.m }),
+      // chat
+      chat: chatOpen, toggleChat: () => this.setState(s => ({ chat: !s.chat })), closeChat: () => this.setState({ chat: false }),
+      chatO: chatOpen ? 1 : 0, chatT: chatOpen ? 'none' : 'translateY(12px) scale(.96)', chatPE: chatOpen ? 'auto' : 'none', chatVis: chatOpen ? 'visible' : 'hidden',
+      fabIcon: chatOpen ? 'M6 6l12 12M18 6L6 18' : 'M4 18.5V7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8.5zM8.5 9.5h7M8.5 12.5h4',
+      fabIn: () => this.setState({ fabHover: true }), fabOut: () => this.setState({ fabHover: false }), fabW: !mob && !chatOpen && this.state.fabHover ? '160px' : '0px', fabO: !mob && !chatOpen && this.state.fabHover ? 1 : 0, fabG: !mob && !chatOpen && this.state.fabHover ? '10px' : '0px',
+      chatListRef: this.chatListRef, typing: this.state.typing, draft: this.state.draft,
+      msgs: this.state.msgs.map(m => m.r === 'u'
+        ? { ...m, cards: [], align: 'flex-end', pad: '9px 12px', radius: '16px 16px 6px 16px', bg: 'var(--blue-700)', color: '#fff' }
+        : { ...m, cards: m.cards || [], align: 'flex-start', pad: '9px', radius: '16px 16px 16px 6px', bg: 'var(--surface-warm)', color: 'var(--text-primary)' }),
+      showChips: this.state.msgs.length < 2,
+      chips: ['Dosis para cucarachas en cocina industrial', 'Documentos de un producto', 'Rodenticidas en bodegas', 'Hablar con un especialista'],
+      sendChip: e => this.ask(e.currentTarget.dataset.q),
+      onDraft: e => this.setState({ draft: e.target.value }),
+      sendChat: e => { e.preventDefault(); this.ask(this.state.draft); }
+    };
+  }
+}
+</script>
 </body>
 </html>
